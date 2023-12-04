@@ -12,6 +12,8 @@ public class BCManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
+    // Quick thanks to Venterok for this:
+    // https://github.com/Venterok/HullBreakerCompany/blob/master/Hull/HullManager.cs#L35
     public void ExecuteAfterDelay(Action Action, float Delay) {
         StartCoroutine(DelayedExecution(Action, Delay));
     }
