@@ -225,3 +225,4 @@ fabric.properties
 Managed/*.dll
 Libraries/*.dll
 Thunderstore/**/*.dll
+Thunderstore/**/*.zip
