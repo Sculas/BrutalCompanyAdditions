@@ -37,6 +37,8 @@ public static class Utils {
             _ => "white"
         };
         HUDManager.Instance.AddTextToChatOnServer(
-            $"<color=yellow>EVENT<color=white>:</color></color>\n<color={positivity}>{Event.Name}</color>");
+            $"<color=yellow>EVENT<color=white>:</color></color>\n" +
+            $"<color={positivity}>{Event.Name}</color>\n" +
+            $"<color=white><size=70%>{Event.Description}</size></color>");
     }
 }

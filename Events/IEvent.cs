@@ -5,6 +5,11 @@ public interface IEvent {
     /// Name of the event.
     /// </summary>
     public string Name { get; }
+    
+    /// <summary>
+    /// Description of the event.
+    /// </summary>
+    public string Description { get; }
 
     /// <summary>
     /// Whether this event (and its effects) is positive, negative or neutral.
