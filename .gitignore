@@ -224,3 +224,4 @@ fabric.properties
 # Game assemblies
 Managed/*.dll
 Libraries/*.dll
+Thunderstore/**/*.dll
