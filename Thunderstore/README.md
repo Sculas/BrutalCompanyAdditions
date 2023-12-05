@@ -10,10 +10,9 @@ that instead.
 
 ## Events
 
-| Name                         | Description                                                                               |
-|------------------------------|-------------------------------------------------------------------------------------------|
-| `Since when can they move?!` | Turrets roam around the map, but have to be stationary to fire.                           |
-| `Springbreak`                | There's rumors going around that Coil-heads are escaping the facility. Better be careful! |
-| `It's just a burning memory` | The backrooms is real.                                                                    |
-| `Bling bling`                | So many gold bars! ...right?                                                              |
-| `Got any stock?`             | They used to say Fort Knox was buried here...                                             |
+| Name                            | Description                                                     |
+|---------------------------------|-----------------------------------------------------------------|
+| `Since when can they move?!` 🚧 | Turrets roam around the map, but have to be stationary to fire. |
+| `It's just a burning memory` 🚧 | The backrooms is real.                                          |
+| `Bling bling`                   | So many gold bars! ...right?                                    |
+| `Got any stock?`                | They used to say Fort Knox was buried here...                   |
