@@ -1,6 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming,RedundantAssignment
 
-using System;
 using HarmonyLib;
 
 namespace BrutalCompanyAdditions.Patches;
@@ -14,21 +13,30 @@ public static class BCPatches {
     public static bool InjectCustomEvents(ref BCP.Data.EventEnum __result) {
         Plugin.Logger.LogWarning("Injecting custom events...");
 
-        int eventId;
-        do {
-            eventId = UnityEngine.Random.Range(MinEventId, EventRegistry.EventCount);
-        } while ((BCP.Data.EventEnum)eventId == LastEvent);
+        switch (EventRegistry.SelectableEvents.Count) {
+            case 0:
+                __result = LastEvent = BCP.Data.EventEnum.None;
+                return false;
+            case 1:
+                __result = LastEvent = EventRegistry.SelectableEvents[0];
+                return false;
+        }
 
-        if (EventRegistry.IsCustomEvent(eventId)) {
-            var customEvent = EventRegistry.GetEvent(eventId);
-            Plugin.Logger.LogWarning($"Selected custom event {customEvent.Name} ({eventId})");
+        BCP.Data.EventEnum selectedEvent;
+        do {
+            var eventId = UnityEngine.Random.Range(MinEventId, EventRegistry.SelectableEvents.Count);
+            selectedEvent = EventRegistry.SelectableEvents[eventId];
+        } while (selectedEvent == LastEvent);
+
+        if (EventRegistry.IsCustomEvent(selectedEvent)) {
+            var customEvent = EventRegistry.GetEvent(selectedEvent);
+            Plugin.Logger.LogWarning($"Selected custom event {customEvent.Name}");
         }
         else {
-            var originalEvent = (BCP.Data.EventEnum)Enum.ToObject(typeof(BCP.Data.EventEnum), eventId);
-            Plugin.Logger.LogWarning($"Selected original event {originalEvent} ({eventId})");
+            Plugin.Logger.LogWarning($"Selected original event {selectedEvent}");
         }
 
-        __result = LastEvent = (BCP.Data.EventEnum)eventId;
+        __result = LastEvent = selectedEvent;
         return false;
     }
 
@@ -41,14 +49,13 @@ public static class BCPatches {
             eventEnum = BCP.Data.EventEnum.None;
         }
 
-        var eventId = (int)eventEnum;
-        if (!EventRegistry.IsCustomEvent(eventId)) {
-            Plugin.Logger.LogWarning($"Event {eventEnum} ({eventId}) is not a custom event, skipping...");
+        if (!EventRegistry.IsCustomEvent(eventEnum)) {
+            Plugin.Logger.LogWarning($"Event {eventEnum} is not a custom event, skipping...");
             return true;
         }
 
-        var selectedEvent = EventRegistry.GetEvent(eventId);
-        Plugin.Logger.LogWarning($"Handling custom event {selectedEvent.Name} ({eventId})...");
+        var selectedEvent = EventRegistry.GetEvent(eventEnum);
+        Plugin.Logger.LogWarning($"Handling custom event {selectedEvent.Name}...");
         Utils.SendEventMessage(selectedEvent);
         selectedEvent.Execute(newLevel);
         return false;

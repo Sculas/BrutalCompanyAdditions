@@ -9,7 +9,7 @@ namespace BrutalCompanyAdditions;
 
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 [BepInProcess("Lethal Company.exe")]
-[BepInDependency("BrutalCompanyPlus")]
+[BepInDependency("BrutalCompanyPlus", "3.0.0")]
 public class Plugin : BaseUnityPlugin {
     private static bool _loaded;
     public new static ManualLogSource Logger;
@@ -17,6 +17,7 @@ public class Plugin : BaseUnityPlugin {
     private void Awake() {
         Logger = base.Logger;
         PluginConfig.Bind(this);
+        EventRegistry.Initialize();
 
         var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
         harmony.PatchAll(typeof(BCPatches));
