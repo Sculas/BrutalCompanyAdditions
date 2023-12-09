@@ -6,19 +6,20 @@ using UnityEngine;
 namespace BrutalCompanyAdditions.Patches;
 
 public static class BCPatches {
-    [HarmonyPatch(typeof(RoundManager), "GenerateNewLevelClientRpc")]
-    [HarmonyPostfix]
-    public static void InjectCustomEventsClient(ref RoundManager __instance, int randomSeed) {
-        if (__instance.IsServer) return;
-        Plugin.Logger.LogWarning("Injecting custom events... (client)");
-
-        var selectedEvent = Utils.SelectRandomEvent(randomSeed);
-        if (!EventRegistry.IsCustomEvent(selectedEvent)) return;
-
-        var customEvent = EventRegistry.GetEvent(selectedEvent);
-        Plugin.Logger.LogWarning($"Handling custom event {customEvent.Name}... (client)");
-        customEvent.ExecuteClient(__instance.currentLevel);
-    }
+    // TODO: redo this. just sync it via a custom network object
+    // [HarmonyPatch(typeof(RoundManager), "GenerateNewLevelClientRpc")]
+    // [HarmonyPostfix]
+    // public static void InjectCustomEventsClient(ref RoundManager __instance, int randomSeed) {
+    //     if (__instance.IsServer) return;
+    //     Plugin.Logger.LogWarning("Injecting custom events... (client)");
+    //
+    //     var selectedEvent = Utils.SelectRandomEvent(randomSeed);
+    //     if (!EventRegistry.IsCustomEvent(selectedEvent)) return;
+    //
+    //     var customEvent = EventRegistry.GetEvent(selectedEvent);
+    //     Plugin.Logger.LogWarning($"Handling custom event {customEvent.Name}... (client)");
+    //     customEvent.ExecuteClient(__instance.currentLevel);
+    // }
 
     [HarmonyPatch(typeof(BrutalCompanyPlus.Plugin), "SelectRandomEvent")]
     [HarmonyPrefix]

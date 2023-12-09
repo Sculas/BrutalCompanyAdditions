@@ -21,17 +21,9 @@ public static class EventRegistry {
     private static readonly int OriginalEventCount = BrutalCompanyPlus.Plugin.eventConfigEntries.Count;
     public static List<BCP.Data.EventEnum> SelectableEvents;
 
-    public static bool IsCustomEvent(BCP.Data.EventEnum EventId) {
-        return (int)EventId >= OriginalEventCount;
-    }
-
-    public static IEvent GetEvent(BCP.Data.EventEnum EventId) {
-        return Events[(int)EventId - OriginalEventCount];
-    }
-
-    private static int GetEventId(IEvent Event) {
-        return OriginalEventCount + Events.IndexOf(Event);
-    }
+    public static bool IsCustomEvent(BCP.Data.EventEnum EventId) => (int)EventId >= OriginalEventCount;
+    public static IEvent GetEvent(BCP.Data.EventEnum EventId) => Events[(int)EventId - OriginalEventCount];
+    private static int GetEventId(IEvent Event) => OriginalEventCount + Events.IndexOf(Event);
 
     public static void Initialize() {
         var enabledEvents = (from kvp in PluginConfig.EventConfig
