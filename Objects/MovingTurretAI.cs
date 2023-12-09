@@ -540,7 +540,7 @@ public class MovingTurretAI : NetworkBehaviour {
 
     private void LogAI(Func<string> Message) {
         if (!PluginConfig.DebugAILogging.Value) return;
-        Plugin.Logger.LogWarning(
+        Plugin.Logger.LogInfo(
             $"[{nameof(MovingTurretAI)}] ({_turretObjectName}; state = {_aiState}) {Message()}"
         );
     }
