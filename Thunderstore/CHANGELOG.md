@@ -1,3 +1,10 @@
+## 1.1.1
+
+### Fixes
+
+- Initialize BCManager at Start<br/>
+  Should hopefully fix a `NullReferenceException` when loading the world in specific circumstances.
+
 ## 1.1.0
 
 ### Features
