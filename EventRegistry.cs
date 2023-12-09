@@ -6,8 +6,10 @@ namespace BrutalCompanyAdditions;
 
 public static class EventRegistry {
     public static readonly List<IEvent> Events = new() {
-        new BlingBling(),
-        new TheVault()
+        // TODO: If I forgot to remove these comments, I'm officially an idiot
+        // new BlingBling(),
+        // new TheVault(),
+        new MovingTurrets()
     };
 
     private static readonly List<BCP.Data.EventEnum> OriginalEvents =
@@ -19,9 +21,17 @@ public static class EventRegistry {
 
     public static List<BCP.Data.EventEnum> SelectableEvents;
 
-    public static bool IsCustomEvent(BCP.Data.EventEnum EventId) => (int)EventId >= OriginalEventCount;
-    public static IEvent GetEvent(BCP.Data.EventEnum EventId) => Events[(int)EventId - OriginalEventCount];
-    private static int GetEventId(IEvent Event) => OriginalEventCount + Events.IndexOf(Event);
+    public static bool IsCustomEvent(BCP.Data.EventEnum EventId) {
+        return (int)EventId >= OriginalEventCount;
+    }
+
+    public static IEvent GetEvent(BCP.Data.EventEnum EventId) {
+        return Events[(int)EventId - OriginalEventCount];
+    }
+
+    private static int GetEventId(IEvent Event) {
+        return OriginalEventCount + Events.IndexOf(Event);
+    }
 
     public static void Initialize() {
         var enabledEvents = (from kvp in PluginConfig.EventConfig

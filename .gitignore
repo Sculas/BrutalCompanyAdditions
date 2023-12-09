@@ -226,3 +226,7 @@ Managed/*.dll
 Libraries/*.dll
 Thunderstore/**/*.dll
 Thunderstore/**/*.zip
+
+# UnityNetcodeWeaver
+Libraries/NetcodePatcher/*
+!Libraries/NetcodePatcher/.gitkeep

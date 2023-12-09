@@ -7,6 +7,7 @@
         <Version>1.1.0</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
+        <DebugType>portable</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -450,6 +451,7 @@
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command='cd "$(ProjectDir)\Libraries\NetcodePatcher" &amp;&amp; .\NetcodePatcher.dll $(TargetDir) "$(ProjectDir)\Managed"'/>
         <Exec Command='xcopy "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Lethal Company\BepInEx\plugins\" /F /R /Y /I'/>
         <Exec Command='xcopy "$(TargetPath)" "$(ProjectDir)\Thunderstore\BepInEx\plugins\" /F /R /Y /I'/>
     </Target>

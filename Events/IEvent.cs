@@ -5,7 +5,7 @@ public interface IEvent {
     /// Name of the event.
     /// </summary>
     public string Name { get; }
-    
+
     /// <summary>
     /// Description of the event.
     /// </summary>
@@ -17,10 +17,21 @@ public interface IEvent {
     public EventPositivity Positivity { get; }
 
     /// <summary>
-    /// Execute the event.
+    /// Execute the event on the server.
     /// </summary>
     /// <param name="Level">the current level</param>
-    public void Execute(SelectableLevel Level);
+    public void ExecuteServer(SelectableLevel Level);
+
+    /// <summary>
+    /// Execute the event on the client.
+    /// </summary>
+    /// <param name="Level">the current level</param>
+    public void ExecuteClient(SelectableLevel Level);
+
+    /// <summary>
+    /// Called when the event is over.
+    /// </summary>
+    public void OnEnd();
 }
 
 public enum EventPositivity {

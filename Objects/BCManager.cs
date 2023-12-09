@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace BrutalCompanyAdditions;
+namespace BrutalCompanyAdditions.Objects;
 
 public class BCManager : MonoBehaviour {
     public static BCManager Instance { get; private set; }

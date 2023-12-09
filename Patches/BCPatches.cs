@@ -1,42 +1,39 @@
 ﻿// ReSharper disable InconsistentNaming,RedundantAssignment
 
 using HarmonyLib;
+using UnityEngine;
 
 namespace BrutalCompanyAdditions.Patches;
 
 public static class BCPatches {
-    private static readonly int MinEventId = PluginConfig.CustomOnly.Value ? EventRegistry.OriginalEventCount : 0;
-    private static BCP.Data.EventEnum LastEvent = BCP.Data.EventEnum.None;
+    [HarmonyPatch(typeof(RoundManager), "GenerateNewLevelClientRpc")]
+    [HarmonyPostfix]
+    public static void InjectCustomEventsClient(ref RoundManager __instance, int randomSeed) {
+        if (__instance.IsServer) return;
+        Plugin.Logger.LogWarning("Injecting custom events... (client)");
+
+        var selectedEvent = Utils.SelectRandomEvent(randomSeed);
+        if (!EventRegistry.IsCustomEvent(selectedEvent)) return;
+
+        var customEvent = EventRegistry.GetEvent(selectedEvent);
+        Plugin.Logger.LogWarning($"Handling custom event {customEvent.Name}... (client)");
+        customEvent.ExecuteClient(__instance.currentLevel);
+    }
 
     [HarmonyPatch(typeof(BrutalCompanyPlus.Plugin), "SelectRandomEvent")]
     [HarmonyPrefix]
-    public static bool InjectCustomEvents(ref BCP.Data.EventEnum __result) {
-        Plugin.Logger.LogWarning("Injecting custom events...");
+    public static bool InjectCustomEventsServer(ref BCP.Data.EventEnum __result) {
+        Plugin.Logger.LogWarning("Injecting custom events... (server)");
 
-        switch (EventRegistry.SelectableEvents.Count) {
-            case 0:
-                __result = LastEvent = BCP.Data.EventEnum.None;
-                return false;
-            case 1:
-                __result = LastEvent = EventRegistry.SelectableEvents[0];
-                return false;
-        }
-
-        BCP.Data.EventEnum selectedEvent;
-        do {
-            var eventId = UnityEngine.Random.Range(MinEventId, EventRegistry.SelectableEvents.Count);
-            selectedEvent = EventRegistry.SelectableEvents[eventId];
-        } while (selectedEvent == LastEvent);
-
+        var selectedEvent = Utils.SelectRandomEvent();
         if (EventRegistry.IsCustomEvent(selectedEvent)) {
             var customEvent = EventRegistry.GetEvent(selectedEvent);
             Plugin.Logger.LogWarning($"Selected custom event {customEvent.Name}");
-        }
-        else {
+        } else {
             Plugin.Logger.LogWarning($"Selected original event {selectedEvent}");
         }
 
-        __result = LastEvent = selectedEvent;
+        __result = selectedEvent;
         return false;
     }
 
@@ -47,6 +44,7 @@ public static class BCPatches {
         if (newLevel.sceneName == "CompanyBuilding") {
             Plugin.Logger.LogWarning("Landed at The Company Building, skipping...");
             eventEnum = BCP.Data.EventEnum.None;
+            return true;
         }
 
         if (!EventRegistry.IsCustomEvent(eventEnum)) {
@@ -55,9 +53,22 @@ public static class BCPatches {
         }
 
         var selectedEvent = EventRegistry.GetEvent(eventEnum);
-        Plugin.Logger.LogWarning($"Handling custom event {selectedEvent.Name}...");
+        Plugin.Logger.LogWarning($"Handling custom event {selectedEvent.Name}... (server)");
         Utils.SendEventMessage(selectedEvent);
-        selectedEvent.Execute(newLevel);
+        selectedEvent.ExecuteServer(newLevel);
         return false;
+    }
+
+    // TODO: If I leave this in, I made a sincere oopsie.
+    [HarmonyPatch(typeof(BrutalCompanyPlus.Plugin), "UpdateMapObjects")]
+    [HarmonyPostfix]
+    public static void DebugManyTurrets(ref SelectableLevel newLevel) {
+        foreach (var mapObject in newLevel.spawnableMapObjects) {
+            if (!mapObject.IsObjectTypeOf<Turret>(out _)) continue;
+            mapObject.numberToSpawn = new AnimationCurve(
+                new Keyframe(0.0f, 15f),
+                new Keyframe(1f, 15f)
+            );
+        }
     }
 }
