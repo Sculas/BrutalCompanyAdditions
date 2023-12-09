@@ -17,8 +17,8 @@ public static class EventRegistry {
             where kvp.Value.Value
             select kvp.Key).ToList();
 
-    public static readonly int OriginalEventCount = OriginalEvents.Count;
-
+    // This is the amount of events that Brutal Company Plus has by default.
+    private static readonly int OriginalEventCount = BrutalCompanyPlus.Plugin.eventConfigEntries.Count;
     public static List<BCP.Data.EventEnum> SelectableEvents;
 
     public static bool IsCustomEvent(BCP.Data.EventEnum EventId) {
@@ -35,10 +35,11 @@ public static class EventRegistry {
 
     public static void Initialize() {
         var enabledEvents = (from kvp in PluginConfig.EventConfig
-            where kvp.Value.Value
-            select GetEventId(Events.Find(Event => Event.Name == kvp.Key))).Cast<BCP.Data.EventEnum>().ToList();
+                where kvp.Value.Value
+                select GetEventId(Events.Find(Event => Event.Name == kvp.Key)))
+            .Cast<BCP.Data.EventEnum>().ToList();
         SelectableEvents = new List<BCP.Data.EventEnum>()
-            .Concat(OriginalEvents)
+            .Concat(PluginConfig.CustomOnly.Value ? new BCP.Data.EventEnum[] { } : OriginalEvents)
             .Concat(enabledEvents).ToList();
     }
 }

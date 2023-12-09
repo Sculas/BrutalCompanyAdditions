@@ -1,3 +1,10 @@
+## 1.1.2
+
+### Fixes
+
+- Fixed support for BCP 3.0.0+ (thank you Tahdikas for helping!)<br/>
+  Some leftover code from pre-1.1.0 broke when certain events were disabled in BCP.
+
 ## 1.1.1
 
 ### Fixes
