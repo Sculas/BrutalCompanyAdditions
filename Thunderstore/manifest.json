@@ -1,6 +1,6 @@
 ﻿{
   "name": "BrutalCompanyAdditions",
-  "version_number": "1.1.0",
+  "version_number": "1.1.1",
   "website_url": "https://github.com/Sculas/BrutalCompanyAdditions",
   "description": "Adds more events to Brutal Company! Requires Brutal Company Plus for now.",
   "dependencies": [
