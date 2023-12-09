@@ -5,7 +5,6 @@ using HarmonyLib;
 namespace BrutalCompanyAdditions.Patches;
 
 public static class BCPatches {
-    private static readonly int MinEventId = PluginConfig.CustomOnly.Value ? EventRegistry.OriginalEventCount : 0;
     private static BCP.Data.EventEnum LastEvent = BCP.Data.EventEnum.None;
 
     [HarmonyPatch(typeof(BrutalCompanyPlus.Plugin), "SelectRandomEvent")]
@@ -24,15 +23,14 @@ public static class BCPatches {
 
         BCP.Data.EventEnum selectedEvent;
         do {
-            var eventId = UnityEngine.Random.Range(MinEventId, EventRegistry.SelectableEvents.Count);
+            var eventId = UnityEngine.Random.Range(0, EventRegistry.SelectableEvents.Count);
             selectedEvent = EventRegistry.SelectableEvents[eventId];
         } while (selectedEvent == LastEvent);
 
         if (EventRegistry.IsCustomEvent(selectedEvent)) {
             var customEvent = EventRegistry.GetEvent(selectedEvent);
             Plugin.Logger.LogWarning($"Selected custom event {customEvent.Name}");
-        }
-        else {
+        } else {
             Plugin.Logger.LogWarning($"Selected original event {selectedEvent}");
         }
 
