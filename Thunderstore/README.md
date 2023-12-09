@@ -1,6 +1,10 @@
 # Brutal Company Additions
 
-This mods adds multiple new events to [Brutal Company Plus][BCPlus]!
+This mod adds multiple new events to [Brutal Company Plus][BCPlus]!
+
+**Everyone MUST have this mod installed to join a lobby!**<br/>
+Most events are host-only, but some also need to be installed by clients,
+otherwise, they'll notice some really weird bugs.
 
 [BCPlus]: https://thunderstore.io/c/lethal-company/p/Nips/Brutal_Company_Plus/
 
