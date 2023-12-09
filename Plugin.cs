@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
 using BrutalCompanyAdditions.Objects;
@@ -24,12 +25,15 @@ public class Plugin : BaseUnityPlugin {
         var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
         harmony.PatchAll(typeof(BCPatches));
 
-        Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} has loaded!");
+        Logger.LogWarning("Time to rule the world! >:]");
     }
 
-    private void OnDestroy() {
+    private void Start() => InitializeBCManager();
+    private void OnDestroy() => InitializeBCManager();
+
+    private static void InitializeBCManager() {
         if (_loaded) return;
-        Logger.LogInfo("BCManager initialized!");
+        Logger.LogWarning("Initializing BCManager...");
         DontDestroyOnLoad(new GameObject(PluginInfo.PLUGIN_GUID, typeof(BCManager)));
         _loaded = true;
     }
