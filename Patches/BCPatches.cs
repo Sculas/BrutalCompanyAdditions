@@ -1,25 +1,40 @@
 ﻿// ReSharper disable InconsistentNaming,RedundantAssignment
 
+using BrutalCompanyAdditions.Objects;
 using HarmonyLib;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BrutalCompanyAdditions.Patches;
 
 public static class BCPatches {
-    // TODO: redo this. just sync it via a custom network object
-    // [HarmonyPatch(typeof(RoundManager), "GenerateNewLevelClientRpc")]
-    // [HarmonyPostfix]
-    // public static void InjectCustomEventsClient(ref RoundManager __instance, int randomSeed) {
-    //     if (__instance.IsServer) return;
-    //     Plugin.Logger.LogWarning("Injecting custom events... (client)");
-    //
-    //     var selectedEvent = Utils.SelectRandomEvent(randomSeed);
-    //     if (!EventRegistry.IsCustomEvent(selectedEvent)) return;
-    //
-    //     var customEvent = EventRegistry.GetEvent(selectedEvent);
-    //     Plugin.Logger.LogWarning($"Handling custom event {customEvent.Name}... (client)");
-    //     customEvent.ExecuteClient(__instance.currentLevel);
-    // }
+    [HarmonyPatch(typeof(GameNetworkManager), "Start")]
+    [HarmonyPostfix]
+    private static void InjectNetworkManager() {
+        NetworkManager.Singleton.AddNetworkPrefab(Plugin.BCNetworkManagerPrefab);
+    }
+
+    [HarmonyPatch(typeof(StartOfRound), "Awake")]
+    [HarmonyPostfix]
+    private static void SpawnNetworkManager() {
+        if (!NetworkManager.Singleton.IsHost && !NetworkManager.Singleton.IsServer) return;
+        Object.Instantiate(Plugin.BCNetworkManagerPrefab, Vector3.zero, Quaternion.identity)
+            .GetComponent<NetworkObject>().Spawn(); // spawn network manager
+    }
+
+    [HarmonyPatch(typeof(RoundManager), "DespawnPropsAtEndOfRound")]
+    [HarmonyPostfix]
+    private static void HandleCustomEventEnd(ref RoundManager __instance) {
+        if (!__instance.IsHost) return;
+
+        var eventId = Utils.LastEvent;
+        BCNetworkManager.Instance.ClearCurrentEvent((int)eventId);
+
+        if (!EventRegistry.IsCustomEvent(eventId)) return;
+        var customEvent = EventRegistry.GetEvent(eventId);
+        Plugin.Logger.LogWarning($"Ending custom event {customEvent.Name}... (server)");
+        customEvent.OnEnd();
+    }
 
     [HarmonyPatch(typeof(BrutalCompanyPlus.Plugin), "SelectRandomEvent")]
     [HarmonyPrefix]
@@ -57,6 +72,10 @@ public static class BCPatches {
         Plugin.Logger.LogWarning($"Handling custom event {selectedEvent.Name}... (server)");
         Utils.SendEventMessage(selectedEvent);
         selectedEvent.ExecuteServer(newLevel);
+
+        // Let the clients know about the event.
+        BCNetworkManager.Instance.SetCurrentEvent((int)eventEnum, newLevel.levelID);
+
         return false;
     }
 

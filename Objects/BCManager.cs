@@ -10,7 +10,7 @@ public class BCManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        Plugin.Logger.LogWarning("BCManager initialized!");
+        Plugin.Logger.LogWarning($"{nameof(BCManager)} initialized!");
     }
 
     // Quick thanks to Venterok for this:

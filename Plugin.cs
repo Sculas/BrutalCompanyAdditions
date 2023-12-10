@@ -14,17 +14,19 @@ namespace BrutalCompanyAdditions;
 public class Plugin : BaseUnityPlugin {
     private static bool _loaded;
     public new static ManualLogSource Logger;
+    public static GameObject BCNetworkManagerPrefab;
 
     private void Awake() {
         Logger = base.Logger;
         PluginConfig.Bind(this);
         EventRegistry.Initialize();
         InitializeNetcode();
+        InitializeBCNetworkManager();
 
         var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
         harmony.PatchAll(typeof(BCPatches));
 
-        Logger.LogWarning("Time to rule the world! >:]");
+        Logger.LogWarning("I'm alive! Time to rule the world >:]");
     }
 
     private void Start() => InitializeBCManager();
@@ -32,9 +34,19 @@ public class Plugin : BaseUnityPlugin {
 
     private static void InitializeBCManager() {
         if (_loaded) return;
-        Logger.LogWarning("Initializing BCManager...");
+        Logger.LogWarning($"Initializing {nameof(BCManager)}...");
         DontDestroyOnLoad(new GameObject(PluginInfo.PLUGIN_GUID, typeof(BCManager)));
         _loaded = true;
+    }
+
+    private static void InitializeBCNetworkManager() {
+        Logger.LogWarning($"Initializing {nameof(BCNetworkManager)}...");
+        var bundle =
+            AssetBundle.LoadFromStream(Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream($"{PluginInfo.PLUGIN_NAME}.Assets.brutalcompanyadditions"));
+        BCNetworkManagerPrefab = bundle.LoadAsset<GameObject>("Assets/BCNetworkManager.prefab");
+        BCNetworkManagerPrefab.AddComponent<BCNetworkManager>();
+        bundle.Unload(false);
     }
 
     private static void InitializeNetcode() {
