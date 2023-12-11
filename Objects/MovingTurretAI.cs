@@ -11,9 +11,25 @@ namespace BrutalCompanyAdditions.Objects;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class MovingTurretAI : NetworkBehaviour {
-    private const float AIIntervalTime = 0.2f;
+    // speed at which the AI updates
+    private const float AIIntervalTime = 0.2f; // 5 times per second
 
-    // Balancing
+    // - Balancing
+    private const float PlayerLostIntervalTime = 0.075f;
+
+    // increases by PlayerLostIntervalTime every interval. PlayerLostMinTime/PlayerLostIntervalTime*AIIntervalTime = seconds until lost
+    private const float PlayerLostMinTime = 1.5f; // 4 seconds
+
+    // decreases by PlayerLostIntervalTime every interval. PlayerLostMaxTime/PlayerLostIntervalTime*AIIntervalTime = seconds until roaming
+    private const float PlayerLostMaxTime = -5.0f; // 13 seconds
+
+    // how fast the AI opens doors, until 1 second is reached
+    private const float OpenDoorSpeedMultiplier = 0.4f; // 2.5 seconds
+
+    // whether the AI can open doors while firing
+    private const bool CanOpenDoorsWhileFiring = false;
+
+    // agent speed and acceleration during different states
     private const float RoamingSpeed = 2f;
     private const float RoamingAcceleration = 8f;
     private const float ChasingSpeed = 4f;
@@ -31,25 +47,25 @@ public class MovingTurretAI : NetworkBehaviour {
     private const float UpdatePositionThreshold = 1f;
     private const float SyncMovementSpeed = 0.22f;
 
-    // Debug variables
-    private string _turretObjectName;
+    // - Debug variables
     private bool _showDebugText;
     private TextMesh _debugText;
     private GameObject _debugTextObject;
 
-    // Sync variables
+    // - Sync variables
     private Vector3 _serverPosition;
     private Vector3 _tempVelocity;
 
     private float _previousYRotation;
     private float _targetYRotation;
 
-    // Cached components
+    // - Cached components
     private NavMeshAgent _agent;
     private Turret _turret;
     private GameObject[] _aiNodes;
+    private AICollisionDetect _collisionDetect;
 
-    // AI variables
+    // - AI variables
     private double _updateAIInterval;
     private double _checkForPlayerInterval;
     private double _setDestinationToPlayerInterval;
@@ -61,16 +77,12 @@ public class MovingTurretAI : NetworkBehaviour {
     private Vector3 _lastKnownPlayerPosition;
     private Collider[] _nearPlayerColliders;
 
-    // Pathfinding variables
+    // - Pathfinding variables
     private Coroutine _searchCoroutine;
     private Coroutine _chooseTargetNodeCoroutine;
     private AISearchRoutine _currentSearch;
     private float _pathDistance;
     private NavMeshPath _path1;
-
-    // TODO:
-    // - Allow turrets to open doors (hook DoorLock#OnTriggerStay), but only if they are not firing.
-    // Make it slow as well, so it's not too overpowered (see EnemyAI#openDoorSpeedMultiplier).
 
     public override void OnDestroy() {
         base.OnDestroy();
@@ -82,10 +94,16 @@ public class MovingTurretAI : NetworkBehaviour {
         _serverPosition = transform.position;
         _agent = GetComponent<NavMeshAgent>();
         _turret = GetComponentInChildren<Turret>();
-        _turretObjectName = _turret.transform.parent.gameObject.name;
 
-        // Disable NavMeshAgent on clients
-        _agent.enabled = IsServer;
+        if (!IsServer) { // client
+            // Disable NavMeshAgent on clients
+            _agent.enabled = false;
+            return; // don't initialize AI on clients
+        }
+
+        // Add AI collision detection
+        _collisionDetect = _turret.gameObject.AddComponent<AICollisionDetect>();
+        _collisionDetect.openDoorSpeedMultiplier = OpenDoorSpeedMultiplier;
 
         // Values taken from Crawler
         _agent.stoppingDistance = 0.0f;
@@ -105,7 +123,7 @@ public class MovingTurretAI : NetworkBehaviour {
         // Initialize debug variables
         _showDebugText = PluginConfig.DebugAI.Value && IsServer;
         if (_showDebugText) {
-            _debugTextObject = new GameObject($"BCA AI Debug Text ({_turretObjectName})") {
+            _debugTextObject = new GameObject("BCA AI Debug Text") {
                 transform = {
                     parent = _turret.aimPoint,
                     localPosition = new Vector3(0, 0.5f, 0),
@@ -187,19 +205,23 @@ public class MovingTurretAI : NetworkBehaviour {
                 // Reset interval
                 _checkForPlayerInterval = 0.0f;
 
-                if (!CheckLineOfSightForPlayer(out player, RoamingRotationRange, 3f, true)) break;
+                if (!CheckLineOfSightForPlayer(out player, RoamingRotationRange, 3f, true))
+                    break;
 
                 // Player found, start chasing
                 StartChasing(player);
                 break;
 
             case AIState.Chasing:
-                if (_turret.turretMode is TurretMode.Firing or TurretMode.Berserk)
-                    // Turret is firing, make them slow
+                if (_turret.turretMode is TurretMode.Firing or TurretMode.Berserk) {
+                    // Turret is firing, make them slow and unable to open doors (if applicable)
                     SetAgentSpeed(FiringSpeed, FiringAcceleration);
-                else
-                    // Turret is not firing, reset speed
+                    if (!CanOpenDoorsWhileFiring) _collisionDetect.canOpenDoors = false;
+                } else {
+                    // Turret is not firing, reset speed and allow opening doors (if applicable)
                     SetAgentSpeed(ChasingSpeed, ChasingAcceleration);
+                    if (!CanOpenDoorsWhileFiring) _collisionDetect.canOpenDoors = true;
+                }
 
                 if (_checkForPlayerInterval <= ChasingCheckForPlayerIntervalTime) {
                     _checkForPlayerInterval += Time.deltaTime;
@@ -221,8 +243,8 @@ public class MovingTurretAI : NetworkBehaviour {
                     }
 
                     // Player not found, try again for a couple of times
-                    _lastSeenTimer -= 0.075f;
-                    if (_lastSeenTimer >= -15.0) return;
+                    _lastSeenTimer -= PlayerLostIntervalTime;
+                    if (_lastSeenTimer >= PlayerLostMaxTime) return;
 
                     // Player still not found after multiple attempts, start roaming
                     StartRoaming();
@@ -239,8 +261,8 @@ public class MovingTurretAI : NetworkBehaviour {
                 }
 
                 // Player lost in chase, update last seen timer
-                _lastSeenTimer += 0.075f;
-                if (_lastSeenTimer <= 1.5) return;
+                _lastSeenTimer += PlayerLostIntervalTime;
+                if (_lastSeenTimer <= PlayerLostMinTime) return;
                 _lostPlayerInChase = true;
 
                 break;
@@ -541,7 +563,7 @@ public class MovingTurretAI : NetworkBehaviour {
     private void LogAI(Func<string> Message) {
         if (!PluginConfig.DebugAILogging.Value) return;
         Plugin.Logger.LogInfo(
-            $"[{nameof(MovingTurretAI)}] ({_turretObjectName}; state = {_aiState}) {Message()}"
+            $"[{nameof(MovingTurretAI)}] (state = {_aiState}) {Message()}"
         );
     }
 

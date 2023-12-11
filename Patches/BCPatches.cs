@@ -86,8 +86,8 @@ public static class BCPatches {
         foreach (var mapObject in newLevel.spawnableMapObjects) {
             if (!mapObject.IsObjectTypeOf<Turret>(out _)) continue;
             mapObject.numberToSpawn = new AnimationCurve(
-                new Keyframe(0.0f, 15f),
-                new Keyframe(1f, 15f)
+                new Keyframe(0.0f, 10f),
+                new Keyframe(1f, 10f)
             );
         }
     }
