@@ -8,22 +8,22 @@ public class BCNetworkManager : NetworkBehaviour {
     public static BCNetworkManager Instance { get; private set; }
 
     // current event id (BCP.Data.EventEnum as int)
-    public NetworkVariable<CurrentNetEvent> CurrentEvent = new();
+    private readonly NetworkVariable<CurrentNetEvent> _currentEvent = new();
 
     private void Awake() {
         Instance = this;
         Log($"{nameof(BCNetworkManager)} initialized!");
 
-        CurrentEvent.OnValueChanged += OnCurrentEventChanged;
+        _currentEvent.OnValueChanged += OnCurrentEventChanged;
     }
 
     public void SetCurrentEvent(int EventId, int LevelId) {
-        CurrentEvent.Value = new CurrentNetEvent { EventId = EventId, LevelId = LevelId, IsEnding = false };
+        _currentEvent.Value = new CurrentNetEvent { EventId = EventId, LevelId = LevelId, IsEnding = false };
     }
 
     public void ClearCurrentEvent(int EventId) {
         var levelId = RoundManager.Instance.currentLevel.levelID;
-        CurrentEvent.Value = new CurrentNetEvent { EventId = EventId, LevelId = levelId, IsEnding = true };
+        _currentEvent.Value = new CurrentNetEvent { EventId = EventId, LevelId = levelId, IsEnding = true };
     }
 
     private void OnCurrentEventChanged(CurrentNetEvent OldEvent, CurrentNetEvent NewEvent) {
@@ -51,12 +51,6 @@ public struct CurrentNetEvent : INetworkSerializable, System.IEquatable<CurrentN
     public int EventId;
     public int LevelId;
     public bool IsEnding;
-
-    public CurrentNetEvent(int EventId, int LevelId, bool IsEnding) {
-        this.EventId = EventId;
-        this.LevelId = LevelId;
-        this.IsEnding = IsEnding;
-    }
 
     public void NetworkSerialize<T>(BufferSerializer<T> Serializer) where T : IReaderWriter {
         if (Serializer.IsReader) {
