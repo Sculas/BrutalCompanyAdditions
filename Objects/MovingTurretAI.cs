@@ -24,18 +24,19 @@ public class MovingTurretAI : NetworkBehaviour {
     private const float PlayerLostMaxTime = -5.0f; // 13 seconds
 
     // how fast the AI opens doors, until 1 second is reached
-    private const float OpenDoorSpeedMultiplier = 0.4f; // 2.5 seconds
+    private const float OpenDoorSpeedMultiplier = 0.5f; // 2 seconds
 
     // whether the AI can open doors while firing
     private const bool CanOpenDoorsWhileFiring = false;
 
     // agent speed and acceleration during different states
-    private const float RoamingSpeed = 2f;
-    private const float RoamingAcceleration = 8f;
-    private const float ChasingSpeed = 4f;
-    private const float ChasingAcceleration = 10f;
-    private const float FiringSpeed = 1f;
-    private const float FiringAcceleration = 2f;
+    private const float AngularSpeed = 150f; // rotation speed
+    private const float RoamingSpeed = 1.5f;
+    private const float RoamingAcceleration = 4f;
+    private const float ChasingSpeed = 2.75f;
+    private const float ChasingAcceleration = 8f;
+    private const float FiringSpeed = 0f;
+    private const float FiringAcceleration = 0f;
 
     // Sentinel values taken from CrawlerAI. Not sure where the actual value comes from.
     private const double RoamingCheckForPlayerIntervalTime = 0.05000000074505806;
@@ -107,7 +108,7 @@ public class MovingTurretAI : NetworkBehaviour {
 
         // Values taken from Crawler
         _agent.stoppingDistance = 0.0f;
-        _agent.angularSpeed = 230f;
+        _agent.angularSpeed = AngularSpeed;
         _agent.radius = 1.21f;
         _agent.height = 3.3f;
         _agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
