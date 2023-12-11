@@ -10,13 +10,8 @@ public class MovingTurrets : IEvent {
 
     private GameObject _turretPrefab;
 
-    public void ExecuteServer(SelectableLevel Level) {
-        Execute(Level);
-    }
-
-    public void ExecuteClient(SelectableLevel Level) {
-        Execute(Level);
-    }
+    public void ExecuteServer(SelectableLevel Level) => Execute(Level);
+    public void ExecuteClient(SelectableLevel Level) => Execute(Level);
 
     private void Execute(SelectableLevel Level) {
         // TODO: remove this before release
@@ -27,9 +22,6 @@ public class MovingTurrets : IEvent {
             (_turretPrefab = mapObject.prefabToSpawn).AddComponent<MovingTurretAI>();
             break; // should only be one turret
         }
-
-        // TODO: Remove this once OnEnd is properly sorted out.
-        BCManager.Instance.ExecuteAfterDelay(OnEnd, 12f);
     }
 
     public void OnEnd() {
