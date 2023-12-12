@@ -1,3 +1,10 @@
+## 1.1.3
+
+### Fixes
+
+- Fixed BCP 3.3.0 compatibility<br/>
+  Some changes were made in BCP 3.3.0 that broke this mod.
+
 ## 1.1.2
 
 ### Fixes
