@@ -6,7 +6,7 @@ using BrutalCompanyAdditions.Objects;
 namespace BrutalCompanyAdditions;
 
 public static class Utils {
-    public static BCP.Data.EventEnum LastEvent = BCP.Data.EventEnum.None;
+    public static BrutalCompanyPlus.BCP.EventEnum LastEvent = BrutalCompanyPlus.BCP.EventEnum.None;
 
     public static void ReplaceScrap(this SelectableLevel Level, string ItemName, int Rarity, int MinValue,
         int MaxValue) {
@@ -39,17 +39,17 @@ public static class Utils {
         return Component != null;
     }
 
-    public static BCP.Data.EventEnum SelectRandomEvent() {
+    public static BrutalCompanyPlus.BCP.EventEnum SelectRandomEvent() {
         switch (EventRegistry.SelectableEvents.Count) {
             case 0:
-                LastEvent = BCP.Data.EventEnum.None;
+                LastEvent = BrutalCompanyPlus.BCP.EventEnum.None;
                 return LastEvent;
             case 1:
                 LastEvent = EventRegistry.SelectableEvents[0];
                 return LastEvent;
         }
 
-        BCP.Data.EventEnum selectedEvent;
+        BrutalCompanyPlus.BCP.EventEnum selectedEvent;
         do {
             var eventId = UnityEngine.Random.Range(0, EventRegistry.SelectableEvents.Count);
             selectedEvent = EventRegistry.SelectableEvents[eventId];

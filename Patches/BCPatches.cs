@@ -38,7 +38,7 @@ public static class BCPatches {
 
     [HarmonyPatch(typeof(BrutalCompanyPlus.Plugin), "SelectRandomEvent")]
     [HarmonyPrefix]
-    public static bool InjectCustomEventsServer(ref BCP.Data.EventEnum __result) {
+    public static bool InjectCustomEventsServer(ref BrutalCompanyPlus.BCP.EventEnum __result) {
         Plugin.Logger.LogWarning("Injecting custom events... (server)");
 
         var selectedEvent = Utils.SelectRandomEvent();
@@ -55,11 +55,11 @@ public static class BCPatches {
 
     [HarmonyPatch(typeof(BrutalCompanyPlus.Plugin), "HandleEventSpecificAdjustments")]
     [HarmonyPrefix]
-    public static bool InjectEventHandlers(ref BCP.Data.EventEnum eventEnum, ref SelectableLevel newLevel) {
+    public static bool InjectEventHandlers(ref BrutalCompanyPlus.BCP.EventEnum eventEnum, ref SelectableLevel newLevel) {
         // Would preferably inject after this check, but we have no other choice than to do it here as well.
         if (newLevel.sceneName == "CompanyBuilding") {
             Plugin.Logger.LogWarning("Landed at The Company Building, skipping...");
-            eventEnum = BCP.Data.EventEnum.None;
+            eventEnum = BrutalCompanyPlus.BCP.EventEnum.None;
             return true;
         }
 

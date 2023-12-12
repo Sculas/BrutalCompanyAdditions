@@ -31,7 +31,7 @@ public class BCNetworkManager : NetworkBehaviour {
         Log($"Received new event: {NewEvent}, old event was {OldEvent}");
         Log("Injecting custom events... (client)");
 
-        var selectedEvent = (BCP.Data.EventEnum)NewEvent.EventId;
+        var selectedEvent = (BrutalCompanyPlus.BCP.EventEnum)NewEvent.EventId;
         if (!EventRegistry.IsCustomEvent(selectedEvent)) return;
         var customEvent = EventRegistry.GetEvent(selectedEvent);
 
