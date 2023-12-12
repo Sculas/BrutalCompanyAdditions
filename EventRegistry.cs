@@ -12,26 +12,26 @@ public static class EventRegistry {
         new MovingTurrets()
     };
 
-    private static readonly List<BCP.Data.EventEnum> OriginalEvents =
+    private static readonly List<BrutalCompanyPlus.BCP.EventEnum> OriginalEvents =
         (from kvp in BrutalCompanyPlus.Plugin.eventConfigEntries
             where kvp.Value.Value
             select kvp.Key).ToList();
 
     // This is the amount of events that Brutal Company Plus has by default.
     private static readonly int OriginalEventCount = BrutalCompanyPlus.Plugin.eventConfigEntries.Count;
-    public static List<BCP.Data.EventEnum> SelectableEvents;
+    public static List<BrutalCompanyPlus.BCP.EventEnum> SelectableEvents;
 
-    public static bool IsCustomEvent(BCP.Data.EventEnum EventId) => (int)EventId >= OriginalEventCount;
-    public static IEvent GetEvent(BCP.Data.EventEnum EventId) => Events[(int)EventId - OriginalEventCount];
+    public static bool IsCustomEvent(BrutalCompanyPlus.BCP.EventEnum EventId) => (int)EventId >= OriginalEventCount;
+    public static IEvent GetEvent(BrutalCompanyPlus.BCP.EventEnum EventId) => Events[(int)EventId - OriginalEventCount];
     private static int GetEventId(IEvent Event) => OriginalEventCount + Events.IndexOf(Event);
 
     public static void Initialize() {
         var enabledEvents = (from kvp in PluginConfig.EventConfig
                 where kvp.Value.Value
                 select GetEventId(Events.Find(Event => Event.Name == kvp.Key)))
-            .Cast<BCP.Data.EventEnum>().ToList();
-        SelectableEvents = new List<BCP.Data.EventEnum>()
-            .Concat(PluginConfig.CustomOnly.Value ? new BCP.Data.EventEnum[] { } : OriginalEvents)
+            .Cast<BrutalCompanyPlus.BCP.EventEnum>().ToList();
+        SelectableEvents = new List<BrutalCompanyPlus.BCP.EventEnum>()
+            .Concat(PluginConfig.CustomOnly.Value ? new BrutalCompanyPlus.BCP.EventEnum[] { } : OriginalEvents)
             .Concat(enabledEvents).ToList();
     }
 }

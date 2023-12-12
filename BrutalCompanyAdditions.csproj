@@ -4,7 +4,7 @@
         <AssemblyName>Sculas.BrutalCompanyAdditions</AssemblyName>
         <Product>BrutalCompanyAdditions</Product>
         <Description>Adds more events to Brutal Company!</Description>
-        <Version>1.1.2</Version>
+        <Version>1.1.3</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <Optimize>true</Optimize>
@@ -24,8 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="BrtualCompanyPlus">
-            <HintPath>Libraries\BrtualCompanyPlus.dll</HintPath>
+        <Reference Include="BrutalCompanyPlus">
+            <HintPath>Libraries\BrutalCompanyPlus.dll</HintPath>
         </Reference>
         <Reference Include="System"/>
         <Reference Include="System.Core"/>
