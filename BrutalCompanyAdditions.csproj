@@ -22,8 +22,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="BrtualCompanyPlus">
-            <HintPath>Libraries\BrtualCompanyPlus.dll</HintPath>
+        <Reference Include="BrutalCompanyPlus">
+            <HintPath>Libraries\BrutalCompanyPlus.dll</HintPath>
         </Reference>
         <Reference Include="Assembly-CSharp">
             <HintPath>Managed\Assembly-CSharp.dll</HintPath>
