@@ -26,7 +26,7 @@ public class MovingTurretAI : NetworkBehaviour {
     // decreases by PlayerLostIntervalTime every interval. PlayerLostMaxTime/PlayerLostIntervalTime*AIIntervalTime = seconds until roaming
     private const float PlayerLostMaxTime = -5.0f; // 13 seconds
 
-    // how fast the AI opens doors, until 1 second is reached
+    // how fast the AI opens doors, until 1 second is reached. 1/OpenDoorSpeedMultiplier = seconds until open
     private const float OpenDoorSpeedMultiplier = 0.5f; // 2 seconds
 
     // whether the AI can open doors while firing

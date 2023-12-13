@@ -6,9 +6,8 @@ namespace BrutalCompanyAdditions;
 
 public static class EventRegistry {
     public static readonly List<IEvent> Events = new() {
-        // TODO: If I forgot to remove these comments, I'm officially an idiot
-        // new BlingBling(),
-        // new TheVault(),
+        new BlingBling(),
+        new TheVault(),
         new MovingTurrets()
     };
 

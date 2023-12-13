@@ -14,9 +14,6 @@ public class MovingTurrets : IEvent {
     public void ExecuteClient(SelectableLevel Level) => Execute(Level);
 
     private void Execute(SelectableLevel Level) {
-        // TODO: remove this before release
-        // would rather not get nailed by a coil-head while testing my cute little creation
-        Level.Enemies.Clear();
         foreach (var mapObject in Level.spawnableMapObjects) {
             if (!mapObject.IsObjectTypeOf<Turret>(out _)) continue;
             (_turretPrefab = mapObject.prefabToSpawn).AddComponent<MovingTurretAI>();
