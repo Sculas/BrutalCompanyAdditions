@@ -78,17 +78,4 @@ public static class BCPatches {
 
         return false;
     }
-
-    // TODO: If I leave this in, I made a sincere oopsie.
-    [HarmonyPatch(typeof(BrutalCompanyPlus.Plugin), "UpdateMapObjects")]
-    [HarmonyPostfix]
-    public static void DebugManyTurrets(ref SelectableLevel newLevel) {
-        foreach (var mapObject in newLevel.spawnableMapObjects) {
-            if (!mapObject.IsObjectTypeOf<Turret>(out _)) continue;
-            mapObject.numberToSpawn = new AnimationCurve(
-                new Keyframe(0.0f, 10f),
-                new Keyframe(1f, 10f)
-            );
-        }
-    }
 }
