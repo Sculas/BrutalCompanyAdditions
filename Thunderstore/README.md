@@ -3,19 +3,19 @@
 This mod adds multiple new events to [Brutal Company Plus][BCPlus]!
 
 **Everyone MUST have this mod installed to join a lobby!**<br/>
-Most events are host-only, but some also need to be installed by clients,
-otherwise, they'll notice some really weird bugs.
+Most events are host-only, but some also need to be installed by clients.<br/>
+Otherwise, they won't be able to join your lobby!
 
 [BCPlus]: https://thunderstore.io/c/lethal-company/p/Nips/Brutal_Company_Plus/
 
 ## Events
 
-| Name                            | Description                                                     |
-|---------------------------------|-----------------------------------------------------------------|
-| `Since when can they move?!`    | Turrets roam around the map, but have to be stationary to fire. |
-| `It's just a burning memory` 🚧 | The backrooms are real.                                         |
-| `Bling bling`                   | So many gold bars! ...right?                                    |
-| `Got any stock?`                | They used to say Fort Knox was buried here...                   |
+| Name                            | Description                                   |
+|---------------------------------|-----------------------------------------------|
+| `Since when can they move?!`    | Did someone give them wheels?                 |
+| `It's just a burning memory` 🚧 | The backrooms are real.                       |
+| `Bling bling`                   | So many gold bars! ...right?                  |
+| `Got any stock?`                | They used to say Fort Knox was buried here... |
 
 ## Support
 

@@ -5,7 +5,7 @@ namespace BrutalCompanyAdditions.Events;
 
 public class MovingTurrets : IEvent {
     public string Name => "Since when can they move?!";
-    public string Description => "Turrets roam around the map, but have to be stationary to fire.";
+    public string Description => "Did someone give them wheels?";
     public EventPositivity Positivity => EventPositivity.Negative;
 
     private GameObject _turretPrefab;
