@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using BrutalCompanyAdditions.Events;
+using BrutalCompanyAdditions.Objects;
 using GameNetcodeStuff;
 using HarmonyLib;
 
@@ -59,6 +60,6 @@ public static class AIPatches {
     }
 
     public static int GetTurretDamage(int original) => EventRegistry.GetEventByType<MovingTurrets>().IsActive()
-        ? PluginConfig.TurretDamage.Value
+        ? BCNetworkManager.Instance.TurretDamage.Value
         : original;
 }

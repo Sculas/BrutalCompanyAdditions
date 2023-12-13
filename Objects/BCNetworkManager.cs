@@ -7,8 +7,9 @@ public class BCNetworkManager : NetworkBehaviour {
 
     public static BCNetworkManager Instance { get; private set; }
 
-    // current event id (BCP.Data.EventEnum as int)
+    // current synced event
     private readonly NetworkVariable<CurrentNetEvent> _currentEvent = new();
+    public readonly NetworkVariable<int> TurretDamage = new(PluginConfig.TurretDamage.Value);
 
     private void Awake() {
         Instance = this;

@@ -10,7 +10,12 @@ public class MovingTurrets : IEvent {
 
     private GameObject _turretPrefab;
 
-    public void ExecuteServer(SelectableLevel Level) => Execute(Level);
+    public void ExecuteServer(SelectableLevel Level) {
+        // sync turret damage to clients
+        BCNetworkManager.Instance.TurretDamage.Value = PluginConfig.TurretDamage.Value;
+        Execute(Level);
+    }
+
     public void ExecuteClient(SelectableLevel Level) => Execute(Level);
 
     private void Execute(SelectableLevel Level) {
