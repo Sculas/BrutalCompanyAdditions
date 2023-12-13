@@ -2,8 +2,8 @@
   "name": "BrutalCompanyAdditions",
   "version_number": "1.1.3",
   "website_url": "https://github.com/Sculas/BrutalCompanyAdditions",
-  "description": "Adds more events to Brutal Company! Requires Brutal Company Plus for now.",
+  "description": "Adds more events to Brutal Company Plus!",
   "dependencies": [
-    "Nips-Brutal_Company_Plus-3.3.0"
+    "Nips-Brutal_Company_Plus-3.3.1"
   ]
 }

@@ -1,20 +1,38 @@
 # Brutal Company Additions
 
-This mods adds multiple new events to Brutal Company![^1]
+This mod adds multiple new events to [Brutal Company Plus][BCPlus]!
+
+**Everyone MUST have this mod installed to join a lobby!**<br/>
+Most events are host-only, but some also need to be installed by clients.<br/>
+Otherwise, they won't be able to join your lobby!
 
 [BCPlus]: https://thunderstore.io/c/lethal-company/p/Nips/Brutal_Company_Plus/
-[^1]: For now, this mod requires [Brutal Company Plus][BCPlus] due to better code separation for hooking.<br/>
-When Brutal Company Reborn is released by u-2018 (which should bring an API for custom events), this mod will switch to
-that instead.
 
 ## Events
 
 > [!CAUTION]
 > Spoilers ahead!
 
-| Name                                        | Description                                                                               |
-|---------------------------------------------|-------------------------------------------------------------------------------------------|
-| `Since when can they move?!` :construction: | Turrets roam around the map, but have to be stationary to fire.                           |
-| `It's just a burning memory` :construction: | The backrooms is real.                                                                    |
-| `Bling bling`                               | So many gold bars! ...right?                                                              |
-| `Got any stock?`                            | They used to say Fort Knox was buried here...                                             |
+<!-- Make sure to keep this in sync with Thunderstore/README.md -->
+
+| Name                                        | Description                                   |
+|---------------------------------------------|-----------------------------------------------|
+| `Since when can they move?!`                | Did someone give them wheels?                 |
+| `It's just a burning memory` :construction: | The backrooms are real.                       |
+| `Bling bling`                               | So many gold bars! ...right?                  |
+| `Got any stock?`                            | They used to say Fort Knox was buried here... |
+
+## Support
+
+If you have any questions or issues, open an issue here
+or join the Lethal Company Modding [Discord server][Discord]
+and ask in the `Brutal Company Additions` thread in `#mod-releases`!
+
+[Discord]: https://discord.gg/PdFNEEEeHD
+
+## Contributing
+
+Contributions are welcome! Feel free to open an issue or a pull request.
+
+Before opening this project, make sure all dependencies in
+[`Managed`](./Managed) and [`Libraries`](./Libraries) are installed first.

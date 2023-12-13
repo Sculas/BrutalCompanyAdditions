@@ -1,32 +1,47 @@
 ﻿// ReSharper disable InconsistentNaming,RedundantAssignment
 
+using BrutalCompanyAdditions.Objects;
 using HarmonyLib;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace BrutalCompanyAdditions.Patches;
 
 public static class BCPatches {
-    private static BrutalCompanyPlus.BCP.EventEnum LastEvent = BrutalCompanyPlus.BCP.EventEnum.None;
+    [HarmonyPatch(typeof(GameNetworkManager), "Start")]
+    [HarmonyPostfix]
+    private static void InjectNetworkManager() {
+        NetworkManager.Singleton.AddNetworkPrefab(Plugin.BCNetworkManagerPrefab);
+    }
+
+    [HarmonyPatch(typeof(StartOfRound), "Awake")]
+    [HarmonyPostfix]
+    private static void SpawnNetworkManager() {
+        if (!NetworkManager.Singleton.IsHost && !NetworkManager.Singleton.IsServer) return;
+        Object.Instantiate(Plugin.BCNetworkManagerPrefab, Vector3.zero, Quaternion.identity)
+            .GetComponent<NetworkObject>().Spawn(); // spawn network manager
+    }
+
+    [HarmonyPatch(typeof(RoundManager), "DespawnPropsAtEndOfRound")]
+    [HarmonyPostfix]
+    private static void HandleCustomEventEnd(ref RoundManager __instance) {
+        if (!__instance.IsHost) return;
+
+        var eventId = Utils.LastEvent;
+        BCNetworkManager.Instance.ClearCurrentEvent((int)eventId);
+
+        if (!EventRegistry.IsCustomEvent(eventId)) return;
+        var customEvent = EventRegistry.GetEvent(eventId);
+        Plugin.Logger.LogWarning($"Ending custom event {customEvent.Name}... (server)");
+        customEvent.OnEnd();
+    }
 
     [HarmonyPatch(typeof(BrutalCompanyPlus.Plugin), "SelectRandomEvent")]
     [HarmonyPrefix]
-    public static bool InjectCustomEvents(ref BrutalCompanyPlus.BCP.EventEnum __result) {
-        Plugin.Logger.LogWarning("Injecting custom events...");
+    public static bool InjectCustomEventsServer(ref BrutalCompanyPlus.BCP.EventEnum __result) {
+        Plugin.Logger.LogWarning("Injecting custom events... (server)");
 
-        switch (EventRegistry.SelectableEvents.Count) {
-            case 0:
-                __result = LastEvent = BrutalCompanyPlus.BCP.EventEnum.None;
-                return false;
-            case 1:
-                __result = LastEvent = EventRegistry.SelectableEvents[0];
-                return false;
-        }
-
-        BrutalCompanyPlus.BCP.EventEnum selectedEvent;
-        do {
-            var eventId = UnityEngine.Random.Range(0, EventRegistry.SelectableEvents.Count);
-            selectedEvent = EventRegistry.SelectableEvents[eventId];
-        } while (selectedEvent == LastEvent);
-
+        var selectedEvent = Utils.SelectRandomEvent();
         if (EventRegistry.IsCustomEvent(selectedEvent)) {
             var customEvent = EventRegistry.GetEvent(selectedEvent);
             Plugin.Logger.LogWarning($"Selected custom event {customEvent.Name}");
@@ -34,7 +49,7 @@ public static class BCPatches {
             Plugin.Logger.LogWarning($"Selected original event {selectedEvent}");
         }
 
-        __result = LastEvent = selectedEvent;
+        __result = selectedEvent;
         return false;
     }
 
@@ -45,6 +60,7 @@ public static class BCPatches {
         if (newLevel.sceneName == "CompanyBuilding") {
             Plugin.Logger.LogWarning("Landed at The Company Building, skipping...");
             eventEnum = BrutalCompanyPlus.BCP.EventEnum.None;
+            return true;
         }
 
         if (!EventRegistry.IsCustomEvent(eventEnum)) {
@@ -53,9 +69,13 @@ public static class BCPatches {
         }
 
         var selectedEvent = EventRegistry.GetEvent(eventEnum);
-        Plugin.Logger.LogWarning($"Handling custom event {selectedEvent.Name}...");
+        Plugin.Logger.LogWarning($"Handling custom event {selectedEvent.Name}... (server)");
         Utils.SendEventMessage(selectedEvent);
-        selectedEvent.Execute(newLevel);
+        selectedEvent.ExecuteServer(newLevel);
+
+        // Let the clients know about the event.
+        BCNetworkManager.Instance.SetCurrentEvent((int)eventEnum, newLevel.levelID);
+
         return false;
     }
 }
