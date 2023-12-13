@@ -15,6 +15,9 @@ public class MovingTurretAI : NetworkBehaviour {
     private const float AIIntervalTime = 0.2f; // 5 times per second
 
     // - Balancing
+    // how much damage the turret does to players by default (can be changed in config)
+    public const int DefaultPlayerDamage = 25;
+
     private const float PlayerLostIntervalTime = 0.075f;
 
     // increases by PlayerLostIntervalTime every interval. PlayerLostMinTime/PlayerLostIntervalTime*AIIntervalTime = seconds until lost
@@ -33,7 +36,7 @@ public class MovingTurretAI : NetworkBehaviour {
     private const float AngularSpeed = 150f; // rotation speed
     private const float RoamingSpeed = 1.5f;
     private const float RoamingAcceleration = 4f;
-    private const float ChasingSpeed = 2.75f;
+    private const float ChasingSpeed = 2.5f;
     private const float ChasingAcceleration = 8f;
     private const float FiringSpeed = 0f;
     private const float FiringAcceleration = 0f;
@@ -434,7 +437,6 @@ public class MovingTurretAI : NetworkBehaviour {
     private IEnumerator ChooseNextNodeInSearchRoutine() {
         yield return null;
         var closestDist = 500f;
-        var gotNode = false;
         GameObject chosenNode = null;
 
         for (var i = _currentSearch.unsearchedNodes.Count - 1; i >= 0; --i) {
@@ -449,13 +451,9 @@ public class MovingTurretAI : NetworkBehaviour {
                            true, false)
                       ) {
                 EliminateNodeFromSearch(i);
-            } else if (_pathDistance < closestDist && (
-                           !_currentSearch.randomized ||
-                           !gotNode ||
-                           UnityEngine.Random.Range(0.0f, 100f) < 65.0)) {
+            } else if (_pathDistance < closestDist) {
                 closestDist = _pathDistance;
                 chosenNode = _currentSearch.unsearchedNodes[i];
-                gotNode = true;
             }
         }
 
@@ -478,7 +476,7 @@ public class MovingTurretAI : NetworkBehaviour {
         if (!_agent.CalculatePath(TargetPos, _path1))
             return true;
 
-        if (Vector3.Distance(_path1.corners[_path1.corners.Length - 1],
+        if (Vector3.Distance(_path1.corners[^1],
                 RoundManager.Instance.GetNavMeshPosition(TargetPos, RoundManager.Instance.navHit, 2.7f)) > 1.5)
             return true;
 
