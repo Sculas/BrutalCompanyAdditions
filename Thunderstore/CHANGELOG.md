@@ -1,3 +1,10 @@
+## 2.0.1
+
+### Fixes
+
+- Properly sync turret damage to clients<br/>
+  Prevents clients from getting the wrong amount of turret damage.
+
 ## 2.0.0
 
 Sorry that it took me so long to add a new event, because somehow I thought the hardest event to make would be the
