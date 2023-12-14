@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BrutalCompanyAdditions.Events;
 using BrutalCompanyAdditions.Objects;
@@ -6,7 +7,14 @@ using BrutalCompanyAdditions.Objects;
 namespace BrutalCompanyAdditions;
 
 public static class Utils {
+    // const here breaks UnityNetcodeWeaver for some reason
+    // ReSharper disable once ConvertToConstant.Local
+    private static readonly BrutalCompanyPlus.BCP.EventEnum InvalidEvent = (BrutalCompanyPlus.BCP.EventEnum)(-1);
+
+    public static BrutalCompanyPlus.BCP.EventEnum ForcedEvent = InvalidEvent;
     public static BrutalCompanyPlus.BCP.EventEnum LastEvent = BrutalCompanyPlus.BCP.EventEnum.None;
+
+    public static bool IsEventForced => (int)ForcedEvent != (int)InvalidEvent;
 
     public static void ReplaceScrap(this SelectableLevel Level, string ItemName, int Rarity, int MinValue,
         int MaxValue) {
@@ -40,13 +48,17 @@ public static class Utils {
     }
 
     public static BrutalCompanyPlus.BCP.EventEnum SelectRandomEvent() {
+        if (ForcedEvent != InvalidEvent) {
+            LastEvent = ForcedEvent;
+            ForcedEvent = InvalidEvent;
+            return LastEvent;
+        }
+
         switch (EventRegistry.SelectableEvents.Count) {
             case 0:
-                LastEvent = BrutalCompanyPlus.BCP.EventEnum.None;
-                return LastEvent;
+                return LastEvent = BrutalCompanyPlus.BCP.EventEnum.None;
             case 1:
-                LastEvent = EventRegistry.SelectableEvents[0];
-                return LastEvent;
+                return LastEvent = EventRegistry.SelectableEvents[0];
         }
 
         BrutalCompanyPlus.BCP.EventEnum selectedEvent;
@@ -57,6 +69,14 @@ public static class Utils {
         } while (selectedEvent == LastEvent);
 
         return LastEvent = selectedEvent;
+    }
+
+    public static bool TryFindEventByName(string Name, out BrutalCompanyPlus.BCP.EventEnum SelectedEvent) {
+        SelectedEvent = EventRegistry.AllEvents.TryGetFirst(
+            EventName => EventName.Key.StartsWith(Name, StringComparison.InvariantCultureIgnoreCase),
+            out var found
+        ).Value;
+        return found;
     }
 
     public static void SendEventMessage(IEvent Event) {
@@ -76,5 +96,17 @@ public static class Utils {
 
     public static bool IsEmpty<T>(this IEnumerable<T> Collection) {
         return !Collection.Any();
+    }
+
+    private static TSource TryGetFirst<TSource>(this IEnumerable<TSource> Source,
+        Func<TSource, bool> Predicate, out bool Found) {
+        foreach (var element in Source) {
+            if (!Predicate(element)) continue;
+            Found = true;
+            return element;
+        }
+
+        Found = false;
+        return default;
     }
 }

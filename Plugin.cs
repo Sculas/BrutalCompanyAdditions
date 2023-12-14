@@ -26,6 +26,7 @@ public class Plugin : BaseUnityPlugin {
         var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
         harmony.PatchAll(typeof(BCPatches));
         harmony.PatchAll(typeof(AIPatches));
+        harmony.PatchAll(typeof(TerminalPatches));
 
         Logger.LogWarning("I'm alive! Time to rule the world >:]");
     }
