@@ -13,15 +13,15 @@ public static class EventRegistry {
     };
 
     private static readonly List<BrutalCompanyPlus.BCP.EventEnum> OriginalEvents =
-        (from kvp in BrutalCompanyPlus.Plugin.eventConfigEntries
-            where kvp.Value.Value
+        (from kvp in BrutalCompanyPlus.Plugin.eventWeightEntries
+            where kvp.Value.Value > 0
             select kvp.Key).ToList();
 
     // Initialized below in [Initialize]
     public static readonly Dictionary<string, BrutalCompanyPlus.BCP.EventEnum> AllEvents = new();
 
     // This is the amount of events that Brutal Company Plus has by default.
-    private static readonly int OriginalEventCount = BrutalCompanyPlus.Plugin.eventConfigEntries.Count;
+    private static readonly int OriginalEventCount = BrutalCompanyPlus.Plugin.eventWeightEntries.Count;
     public static List<BrutalCompanyPlus.BCP.EventEnum> SelectableEvents;
 
     public static bool IsCustomEvent(BrutalCompanyPlus.BCP.EventEnum EventId) => (int)EventId >= OriginalEventCount;
@@ -43,7 +43,7 @@ public static class EventRegistry {
             .Concat(enabledEvents).ToList();
 
         AllEvents.AddRange(
-            BrutalCompanyPlus.Plugin.eventConfigEntries.ToDictionary(
+            BrutalCompanyPlus.Plugin.eventWeightEntries.ToDictionary(
                 Event => Event.Key.ToString(),
                 Event => Event.Key
             )
