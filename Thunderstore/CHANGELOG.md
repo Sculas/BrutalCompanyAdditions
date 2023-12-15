@@ -1,3 +1,17 @@
+## 2.1.0
+
+### Features
+
+- Added host-only `forceevent` command<br/>
+  Allows the host in your game to force an event to happen next round.
+
+### Fixes
+
+- Fixed BCP 3.4.0 compatibility<br/>
+  Event weights were added in BCP 3.4.0, which broke this mod.<br/>
+  Currently, this mod will not use the event weights because I'm working together
+  with Nips to get an official event API in BCP. That should also fix any future incompatibility issues.
+
 ## 2.0.1
 
 ### Fixes
