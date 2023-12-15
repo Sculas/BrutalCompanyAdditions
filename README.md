@@ -19,6 +19,7 @@ Otherwise, they won't be able to join your lobby!
 |---------------------------------------------|-----------------------------------------------|
 | `Since when can they move?!`                | Did someone give them wheels?                 |
 | `It's just a burning memory` :construction: | The backrooms are real.                       |
+| `Flashy loot` :construction:                | MY EYES!!!                                    |
 | `Bling bling`                               | So many gold bars! ...right?                  |
 | `Got any stock?`                            | They used to say Fort Knox was buried here... |
 
