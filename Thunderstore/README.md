@@ -18,6 +18,9 @@ Otherwise, they won't be able to join your lobby!
 | `Bling bling`                   | So many gold bars! ...right?                  |
 | `Got any stock?`                | They used to say Fort Knox was buried here... |
 
+As the host, you may force an event (also from BCP)
+by running `forceevent [event name, partial allowed]` in the Terminal.
+
 ## Support
 
 If you have any questions or issues, open an issue on the [GitHub repository][GitHub]
