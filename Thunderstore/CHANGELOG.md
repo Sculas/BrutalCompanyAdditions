@@ -1,3 +1,12 @@
+## 2.1.1
+
+### Fixes
+
+- Fixed BCP 3.4.0 compatibility<br/>
+  **Emergency fix.** Seems like something went wrong in BCP while bumping
+  the version number, which this mod checks for to ensure compatibility.
+  This check has been temporarily removed until it's fixed in BCP.
+
 ## 2.1.0
 
 ### Features
